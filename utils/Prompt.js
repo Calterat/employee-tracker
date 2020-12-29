@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const { viewDepartments, viewRoles, viewEmployees }= require('./Database');
+const { viewDepartments, viewRoles, viewEmployees, insertDepartment }= require('./Database');
 
 const initialize = _ => {
   return inquirer.prompt([
@@ -56,10 +56,7 @@ const addDepartment = _ => {
             message: 'What is the name of the department?'
           }
   ])
-  .then(data => {
-    console.log(`Update Database with:`);
-    console.table(data);
-  })
+  .then(data => insertDepartment(data.department))
   .then(initialize);
 }
 

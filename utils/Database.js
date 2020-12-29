@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
-const sqlpass = 'password'
+const sqlpass = 'bpz92odK$'
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -34,5 +34,12 @@ const viewEmployees = () => {
   })
 }
 
+const insertDepartment = department => {
+  return new Promise ((res, rej) => {
+    connection.execute(`INSERT INTO department (name) VALUES (?)`, [department], (err, results, fields) => {
+      res(results);
+    })
+  })
+}
 
-module.exports = { viewDepartments, viewRoles, viewEmployees }
+module.exports = { viewDepartments, viewRoles, viewEmployees, insertDepartment }
