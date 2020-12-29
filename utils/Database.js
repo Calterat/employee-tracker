@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
-const sqlpass = 'bpz92odK$'
+const sqlpass = 'password'
 
 const connection = mysql.createConnection({
   host: 'localhost',
