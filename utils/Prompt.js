@@ -1,4 +1,5 @@
 const inquirer = require('inquirer');
+const { viewDepartments, viewRoles, viewEmployees }= require('./Database');
 
 const initialize = _ => {
   return inquirer.prompt([
@@ -15,16 +16,16 @@ const initialize = _ => {
 const promptChoice = choice => {
   switch (choice) {
     case 'View all Departments':
-      console.log('viewDepartments');
-      initialize();
+      viewDepartments()
+        .then(initialize);
       break;
     case 'View all Roles':
-      console.log('viewRoles');
-      initialize();
+      viewRoles()
+        .then(initialize);
       break;
     case 'View all Employees':
-      console.log('viewEmployees');
-      initialize();
+      viewEmployees()
+        .then(initialize);
       break;
     case 'Add a Department':
       addDepartment();
