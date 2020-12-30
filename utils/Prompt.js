@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const { viewDepartments, viewRoles, viewEmployees, insertDepartment }= require('./Database');
+const { viewDepartments, viewRoles, viewEmployees, insertDepartment, insertRole, insertEmployee }= require('./Database');
 
 const initialize = _ => {
   return inquirer.prompt([
@@ -79,10 +79,7 @@ const addRole = _ => {
             choices: ['Department1', 'Department2', 'Department3']
           }
   ])
-  .then(data => {
-    console.log(`Update Database with:`);
-    console.table(data);
-  })
+  .then(data => insertRole(data.title, data.salary, data.department_id))
   .then(initialize);
 }
 
@@ -111,10 +108,7 @@ const addEmployee = _ => {
             choices: ['Manager1', 'Manager2', 'Manager3']
           }
   ])
-  .then(data => {
-    console.log(`Update Database with:`);
-    console.table(data);
-  })
+  .then(data => insertEmployee(data.first_name, data.last_name, data.role_id, data.manager_id))
   .then(initialize);
 }
 
