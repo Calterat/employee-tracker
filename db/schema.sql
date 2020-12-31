@@ -26,3 +26,7 @@ CREATE TABLE employee (
   CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL,
   CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
 );
+
+DROP USER IF EXISTS grader;
+CREATE USER 'grader'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL ON company.* TO 'grader'@'localhost';

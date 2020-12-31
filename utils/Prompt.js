@@ -42,7 +42,7 @@ const promptChoice = choice => {
       break;
     case 'Exit':
       console.log('Good Bye!');
-      break;
+      process.exit();
     default: console.log('Error');
       break;
   }

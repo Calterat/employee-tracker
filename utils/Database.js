@@ -5,7 +5,7 @@ const sqlpass = 'password'
 
 const connection = mysql.createConnection({
   host: 'localhost',
-  user: 'root',
+  user: 'grader',
   password: sqlpass,
   database: 'company'
 })
