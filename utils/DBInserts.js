@@ -1,5 +1,4 @@
 const mysql = require('mysql2');
-const cTable = require('console.table');
 
 const sqlpass = 'password'
 
@@ -9,31 +8,6 @@ const connection = mysql.createConnection({
   password: sqlpass,
   database: 'company'
 })
-
-const viewDepartments = () => {
-  return new Promise ((res, rej) => {
-    connection.query('SELECT * FROM department', (err, results, fields) => {
-      res(console.table(results));
-    })
-  })
-}
-
-const viewRoles = () => {
-  return new Promise ((res, rej) => {
-    connection.query('SELECT * FROM roles', (err, results, fields) => {
-      res(console.table(results));
-    })
-  })
-}
-
-const viewEmployees = () => {
-  return new Promise ((res, rej) => {
-    connection.query('SELECT * FROM employee', (err, results, fields) => {
-      console.log(results);
-      res(console.table(results));
-    })
-  })
-}
 
 const insertDepartment = department => {
   return new Promise ((res, rej) => {
@@ -69,5 +43,5 @@ const insertEmployee = (firstName, lastName, role, manager) => {
 }
 
 module.exports = { 
-  viewDepartments, viewRoles, viewEmployees, insertDepartment, insertRole, insertEmployee
+  insertDepartment, insertRole, insertEmployee
  }
