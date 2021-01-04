@@ -22,11 +22,11 @@ CREATE TABLE employee (
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
   role_id INTEGER NULL,
-  manager_id INTEGER NULL,
+  manager_id INTEGER NULL default NULL,
   CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL,
   CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
 );
 
-DROP USER IF EXISTS grader;
+DROP USER IF EXISTS 'grader'@'localhost';
 CREATE USER 'grader'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL ON company.* TO 'grader'@'localhost';

@@ -2,19 +2,28 @@ INSERT INTO department (name)
 VALUES
   ('clothes'),
   ('perfume'),
-  ('jewelry');
+  ('jewelry'),
+  ('shoes');
 
 INSERT INTO roles (title, salary, department_id)
 VALUES
-  ('csr', 10300, 3),
-  ('manager', 21000, 1);
+  ('clothes employee', 10300, 1),
+  ('perfume employee', 10300, 2),
+  ('jewelry employee', 10300, 3),
+  ('shoes employee', 10300, 4),
+  ('clothes manager', 21000, 1),
+  ('perfume manager', 21000, 2),
+  ('jewelry manager', 21000, 3),
+  ('shoes manager', 21000, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
-  ('Jim', 'Boss', 2, NULL),
-  ('Joe', 'Boss', 2, NULL),
-  ('Kels', 'Boss', 2, NULL),
-  ('Jim', 'Bob', 1, NULL),
-  ('Joe', 'Schmo', 1, NULL),
-  ('Kels', 'Kills', 1, NULL);
+  ('Jim', 'Boss', 5, NULL),
+  ('Joe', 'Boss', 6, NULL),
+  ('Kels', 'Boss', 7, NULL),
+  ('Kim', 'Boss', 8, NULL),
+  ('Jim', 'Bob', 1, 5),
+  ('Joe', 'Schmo', 2, 6),
+  ('Kels', 'Kills', 3, 7),
+  ('Kim', 'Boss', 4, 8);
   

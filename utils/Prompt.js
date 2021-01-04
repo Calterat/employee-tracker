@@ -1,8 +1,11 @@
 const inquirer = require('inquirer');
-const { viewDepartments, viewRoles, viewEmployees }= require('./DBRetrieval');
-const { insertDepartment, insertRole, insertEmployee } = require('./DBInserts');
-const { employeeList, roleList } = require('./DBLists');
-const { dbUpdateEmp } = require('./dbUpdates');
+const { 
+  viewDepartments, viewRoles, viewEmployees,
+  insertDepartment, insertRole, insertEmployee,
+  employeeList, roleList, departmentList, managerList,
+  dbUpdateEmp, departmentId, roleId, managerId
+  }= require('./DBFunctions');
+
 
 
 const initialize = _ => {
@@ -81,7 +84,7 @@ const addDepartment = _ => {
   .then(initialize);
 }
 
-const addRole = _ => {
+const addRole = async () => {
   return inquirer.prompt([
     {
       type: 'input',
@@ -89,22 +92,22 @@ const addRole = _ => {
       message: 'What is the title of the role?'
     },
     {
-      type: 'input',
+      type: 'number',
       name: 'salary',
-      message: 'What is the salaray of this role?'
+      message: 'What is the salary of this role?'
     },
     {
       type: 'list',
-      name: 'department_id',
+      name: 'department',
       message: 'What department is this role in?',
-      choices: ['Department1', 'Department2', 'Department3']
+      choices: await departmentList()
     }
   ])
-  .then(data => insertRole(data.title, data.salary, data.department_id))
+  .then(async data => insertRole(data.title, data.salary, await departmentId(data.department)))
   .then(initialize);
 }
 
-const addEmployee = _ => {
+const addEmployee = async () => {
   return inquirer.prompt([
     {
       type: 'input',
@@ -118,18 +121,18 @@ const addEmployee = _ => {
     },
     {
       type: 'list',
-      name: 'role_id',
+      name: 'role',
       message: 'What role will this employee have?',
-      choices: ['Role1', 'Role2', 'Role3']
+      choices: await roleList()
     },
     {
       type: 'list',
-      name: 'manager_id',
+      name: 'manager',
       message: 'Who will be the manager?',
-      choices: ['Manager1', 'Manager2', 'Manager3']
+      choices: await managerList()
     }
   ])
-  .then(data => insertEmployee(data.first_name, data.last_name, data.role_id, data.manager_id))
+  .then(async data => insertEmployee(data.first_name, data.last_name, await roleId(data.role), await managerId(data.manager)))
   .then(initialize);
 }
 
