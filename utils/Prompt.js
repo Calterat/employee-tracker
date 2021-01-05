@@ -1,10 +1,7 @@
 const inquirer = require('inquirer');
-const { 
-  viewDepartments, viewRoles, viewEmployees,
-  insertDepartment, insertRole, insertEmployee,
-  employeeList, roleList, departmentList, managerList,
-  dbUpdateEmp, departmentId, roleId, managerId
-  }= require('./DBFunctions');
+const db = require('./dbClass')
+
+const database = new db;
 
 
 
@@ -24,15 +21,15 @@ const initialize = _ => {
 const promptChoice = choice => {
   switch (choice) {
     case 'View all Departments':
-      viewDepartments()
+      database.viewDepartments()
         .then(initialize);
       break;
     case 'View all Roles':
-      viewRoles()
+      database.viewRoles()
         .then(initialize);
       break;
     case 'View all Employees':
-      viewEmployees()
+      database.viewEmployees()
         .then(initialize);
       break;
     case 'Add a Department':
@@ -45,7 +42,9 @@ const promptChoice = choice => {
       addEmployee();
       break;
     case 'Update an Employee Role':
-      updateEmployeeRole().then(data => dbUpdateEmp(data)).then(initialize);
+      updateEmployeeRole()
+        .then(data => database.updateEmployee(data))
+        .then(initialize);
       break;
     case 'Exit':
       console.log('Good Bye!');
@@ -61,13 +60,13 @@ const updateEmployeeRole = async () => {
       type: 'list',
       name: 'employee',
       message: `Which employee's role needs to change?`,
-      choices: await employeeList()
+      choices: await database.employeeList()
     },
     {
       type: 'list',
       name: 'role',
       message: 'Which role is employee moving to?',
-      choices: await roleList()
+      choices: await database.roleList()
     }
   ])
 }
@@ -80,7 +79,7 @@ const addDepartment = _ => {
       message: 'What is the name of the department?'
     }
   ])
-  .then(data => insertDepartment(data.department))
+  .then(data => database.insertDepartment(data.department))
   .then(initialize);
 }
 
@@ -100,10 +99,10 @@ const addRole = async () => {
       type: 'list',
       name: 'department',
       message: 'What department is this role in?',
-      choices: await departmentList()
+      choices: await database.departmentList()
     }
   ])
-  .then(async data => insertRole(data.title, data.salary, await departmentId(data.department)))
+  .then(async data => database.insertRole(data.title, data.salary, await database.departmentId(data.department)))
   .then(initialize);
 }
 
@@ -123,16 +122,16 @@ const addEmployee = async () => {
       type: 'list',
       name: 'role',
       message: 'What role will this employee have?',
-      choices: await roleList()
+      choices: await database.roleList()
     },
     {
       type: 'list',
       name: 'manager',
       message: 'Who will be the manager?',
-      choices: await managerList()
+      choices: await database.managerList()
     }
   ])
-  .then(async data => insertEmployee(data.first_name, data.last_name, await roleId(data.role), await managerId(data.manager)))
+  .then(async data => database.insertEmployee(data.first_name, data.last_name, await database.roleId(data.role), await database.managerId(data.manager)))
   .then(initialize);
 }
 
