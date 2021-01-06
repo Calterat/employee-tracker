@@ -16,7 +16,8 @@ const initialize = _ => {
       'View Employees by Department', 'Add a Department',
       'Add a Role', 'Add an Employee', 'Update an Employee Role',
       `Update an Employee's Manager`, 'Delete a department',
-      'Delete a role', 'Delete an employee', 'Exit']
+      'Delete a role', 'Delete an employee',
+      'View combined salary of department', 'Exit']
     }
   ])
   .then(data => promptChoice(data.choice))
@@ -68,19 +69,19 @@ const promptChoice = choice => {
         .then(initialize);
       break;
     case 'Delete a department':
-      deleteDepartment()
+      askDepartment()
         .then(data => database.departmentId(data.department))
         .then(data => database.deleteDept(data))
         .then(initialize);
       break;
     case 'Delete a role':
-      deleteRole()
+      askRole()
         .then(data => database.roleId(data.role))
         .then(data => database.deleteRole(data))
         .then(initialize);
       break;  
     case 'Delete an employee':
-      deleteEmployee()
+      askEmployee()
         .then(data => database.empId(data.employee))
         .then(data => database.deleteEmployee(data))
         .then(initialize);
@@ -88,6 +89,12 @@ const promptChoice = choice => {
     case `Update an Employee's Manager`:
       updateEmployeeManager()
         .then(data => database.updateEmployeeManager(data))
+        .then(initialize);
+      break;  
+    case 'View combined salary of department':
+      askDepartment()
+        .then(data => database.departmentId(data.department))
+        .then(data => database.departmentsEmployees(data))
         .then(initialize);
       break;  
     case 'Exit':
@@ -98,7 +105,7 @@ const promptChoice = choice => {
   }
 }
 
-const deleteDepartment = async () => {
+const askDepartment = async () => {
   return inquirer.prompt([
     {
       type: 'list',
@@ -109,7 +116,7 @@ const deleteDepartment = async () => {
   ])
 }
 
-const deleteRole = async () => {
+const askRole = async () => {
   return inquirer.prompt([
     {
       type: 'list',
@@ -120,7 +127,7 @@ const deleteRole = async () => {
   ])
 }
 
-const deleteEmployee = async () => {
+const askEmployee = async () => {
   return inquirer.prompt([
     {
       type: 'list',
