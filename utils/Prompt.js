@@ -16,7 +16,7 @@ const initialize = _ => {
       'View Employees by Department', 'Add a Department',
       'Add a Role', 'Add an Employee', 'Update an Employee Role',
       `Update an Employee's Manager`, 'Delete a department',
-      'Exit']
+      'Delete a role', 'Delete an employee', 'Exit']
     }
   ])
   .then(data => promptChoice(data.choice))
@@ -42,7 +42,7 @@ const promptChoice = choice => {
     case 'View Employees by Manager':
       console.log('');
       viewEmpByManager()
-        .then(data => database.managerId(data.manager))
+        .then(data => database.empId(data.manager))
         .then(data => database.managersEmployees(data))
         .then(initialize);
       break;
@@ -72,6 +72,18 @@ const promptChoice = choice => {
         .then(data => database.departmentId(data.department))
         .then(data => database.deleteDept(data))
         .then(initialize);
+      break;
+    case 'Delete a role':
+      deleteRole()
+        .then(data => database.roleId(data.role))
+        .then(data => database.deleteRole(data))
+        .then(initialize);
+      break;  
+    case 'Delete an employee':
+      deleteEmployee()
+        .then(data => database.empId(data.employee))
+        .then(data => database.deleteEmployee(data))
+        .then(initialize);
       break;  
     case `Update an Employee's Manager`:
       updateEmployeeManager()
@@ -93,6 +105,28 @@ const deleteDepartment = async () => {
       name: 'department',
       message: `Which department would you like to delete?`,
       choices: await database.departmentList()
+    }
+  ])
+}
+
+const deleteRole = async () => {
+  return inquirer.prompt([
+    {
+      type: 'list',
+      name: 'role',
+      message: `Which role would you like to delete?`,
+      choices: await database.roleList()
+    }
+  ])
+}
+
+const deleteEmployee = async () => {
+  return inquirer.prompt([
+    {
+      type: 'list',
+      name: 'employee',
+      message: `Which employee would you like to delete?`,
+      choices: await database.employeeList()
     }
   ])
 }
@@ -216,7 +250,7 @@ const addEmployee = async () => {
       choices: await database.managerList()
     }
   ])
-  .then(async data => database.insertEmployee(data.first_name, data.last_name, await database.roleId(data.role), await database.managerId(data.manager)))
+  .then(async data => database.insertEmployee(data.first_name, data.last_name, await database.roleId(data.role), await database.empId(data.manager)))
   .then(initialize);
 }
 

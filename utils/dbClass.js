@@ -43,6 +43,22 @@ class db {
     })
   }
 
+  deleteRole(id) {
+    return new Promise ((res, rej) => {
+      pool.execute(`
+        DELETE FROM roles where id = ?
+        `, [id], (err, results, fields) => res(console.log('Deleted!')))
+    })
+  }
+
+  deleteEmployee(id) {
+    return new Promise ((res, rej) => {
+      pool.execute(`
+        DELETE FROM employee where id = ?
+        `, [id], (err, results, fields) => res(console.log('Deleted!')))
+    })
+  }
+
   viewEmployees() {
     return new Promise ((res, rej) => {
       pool.execute(`
@@ -155,17 +171,18 @@ class db {
     })
   }
 
-  managerId(manager) {
-    if (manager === 'No manager to report to.') return null;
-    let managerName = manager.split(' ');
-    let managerFirstName = managerName[0];
-    let managerLastName = managerName[1];
+  empId(name) {
+    if (name === 'No manager to report to.') return null;
+    let fullName = name.split(' ');
+    let FirstName = fullName[0];
+    let LastName = fullName[1];
     return new Promise((res, rej) => {
-      pool.execute(`SELECT id FROM employee WHERE first_name = ? AND last_name = ?`, [managerFirstName, managerLastName], (err, results, fields) => {
+      pool.execute(`SELECT id FROM employee WHERE first_name = ? AND last_name = ?`, 
+      [FirstName, LastName], (err, results, fields) => {
         if (err) console.log(err);
-        let managerId = results.map(data => data.id);
-        let resolve = managerId[0];
-        res(resolve);
+        let idArr = results.map(data => data.id);
+        let id = idArr[0];
+        res(id);
         })
     })
   }
