@@ -58,6 +58,29 @@ class db {
     })
   }
 
+  managersEmployees(id) {
+    return new Promise ((res, rej) => {
+      pool.execute(`
+        SELECT
+          employee.id,
+          first_name,
+          last_name,
+          roles.title,
+          department.name AS department,
+          roles.salary
+        FROM employee
+        INNER JOIN roles ON employee.role_id = roles.id
+        INNER JOIN department ON roles.department_id = department.id
+        WHERE manager_id = ?
+        ORDER BY employee.id ASC;
+        `, [id], (err, results, fields) => {
+          if (err) console.log(err);
+          if (!results[0]) res(console.log('There are no employees under this manager'))
+          res(console.table(results))
+        })
+    })
+  }
+
   insertDepartment(department){
     return new Promise ((res, rej) => {
       pool.execute(`INSERT INTO department (name) VALUES (?)`, [department], (err, results, fields) => {

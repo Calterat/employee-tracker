@@ -12,7 +12,8 @@ const initialize = _ => {
       name: 'choice',
       message: 'What would you like to do?',
       choices: ['View all Departments', 'View all Roles', 
-      'View all Employees', 'Add a Department', 'Add a Role', 
+      'View all Employees', `View Employee's by Manager`,
+      'Add a Department', 'Add a Role', 
       'Add an Employee', 'Update an Employee Role', 
       `Update an Employee's Manager`, 'Exit']
     }
@@ -37,7 +38,14 @@ const promptChoice = choice => {
       database.viewEmployees()
         .then(initialize);
       break;
-    case 'Add a Department':
+    case `View Employee's by Manager`:
+      console.log('');
+      viewEmpByManager()
+        .then(data => database.managerId(data.manager))
+        .then(data => database.managersEmployees(data))
+        .then(initialize);
+    break;
+      case 'Add a Department':
       addDepartment();
       break;
     case 'Add a Role':
@@ -62,6 +70,17 @@ const promptChoice = choice => {
     default: console.log('Error, Please CTRL-C to terminate!');
       break;
   }
+}
+
+const viewEmpByManager = async () => {
+  return inquirer.prompt([
+    {
+      type: 'list',
+      name: 'manager',
+      message: `Which Manager's employees would you like to see?`,
+      choices: await database.managerList()
+    }
+  ])
 }
 
 const updateEmployeeRole = async () => {
