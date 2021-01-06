@@ -14,8 +14,8 @@ const initialize = _ => {
       choices: ['View all Departments', 'View all Roles', 
       'View all Employees', 'View Employees by Manager',
       'View Employees by Department', 'Add a Department',
-      'Add a Role', 'Add an Employee',
-      'Update an Employee Role', `Update an Employee's Manager`,
+      'Add a Role', 'Add an Employee', 'Update an Employee Role',
+      `Update an Employee's Manager`, 'Delete a department',
       'Exit']
     }
   ])
@@ -67,6 +67,12 @@ const promptChoice = choice => {
         .then(data => database.updateEmployeeRole(data))
         .then(initialize);
       break;
+    case 'Delete a department':
+      deleteDepartment()
+        .then(data => database.departmentId(data.department))
+        .then(data => database.deleteDept(data))
+        .then(initialize);
+      break;  
     case `Update an Employee's Manager`:
       updateEmployeeManager()
         .then(data => database.updateEmployeeManager(data))
@@ -79,6 +85,18 @@ const promptChoice = choice => {
       break;
   }
 }
+
+const deleteDepartment = async () => {
+  return inquirer.prompt([
+    {
+      type: 'list',
+      name: 'department',
+      message: `Which department would you like to delete?`,
+      choices: await database.departmentList()
+    }
+  ])
+}
+
 
 const viewEmpByManager = async () => {
   return inquirer.prompt([

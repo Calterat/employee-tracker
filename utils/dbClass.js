@@ -35,6 +35,14 @@ class db {
     })
   }
 
+  deleteDept(id) {
+    return new Promise ((res, rej) => {
+      pool.execute(`
+        DELETE FROM department where id = ?
+        `, [id], (err, results, fields) => res(console.log('Deleted!')))
+    })
+  }
+
   viewEmployees() {
     return new Promise ((res, rej) => {
       pool.execute(`
