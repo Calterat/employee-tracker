@@ -11,7 +11,10 @@ const initialize = _ => {
       type: 'list',
       name: 'choice',
       message: 'What would you like to do?',
-      choices: ['View all Departments', 'View all Roles', 'View all Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Exit']
+      choices: ['View all Departments', 'View all Roles', 
+      'View all Employees', 'Add a Department', 'Add a Role', 
+      'Add an Employee', 'Update an Employee Role', 
+      `Update an Employee's Manager`, 'Exit']
     }
   ])
   .then(data => promptChoice(data.choice))
@@ -45,9 +48,14 @@ const promptChoice = choice => {
       break;
     case 'Update an Employee Role':
       updateEmployeeRole()
-        .then(data => database.updateEmployee(data))
+        .then(data => database.updateEmployeeRole(data))
         .then(initialize);
       break;
+    case `Update an Employee's Manager`:
+      updateEmployeeManager()
+        .then(data => database.updateEmployeeManager(data))
+        .then(initialize);
+      break;  
     case 'Exit':
       console.log('Good Bye!');
       process.exit();
@@ -72,6 +80,24 @@ const updateEmployeeRole = async () => {
     }
   ])
 }
+
+const updateEmployeeManager = async () => {
+  return inquirer.prompt([
+    {
+      type: 'list',
+      name: 'employee',
+      message: `Which employee's manager needs to change?`,
+      choices: await database.employeeList()
+    },
+    {
+      type: 'list',
+      name: 'manager',
+      message: 'Which manager will this employee report to?',
+      choices: await database.managerList()
+    }
+  ])
+}
+
 
 const addDepartment = _ => {
   return inquirer.prompt([

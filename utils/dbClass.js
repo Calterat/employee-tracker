@@ -39,17 +39,17 @@ class db {
     return new Promise ((res, rej) => {
       pool.execute(`
         SELECT
-          employee.id,
-          employee.first_name,
-          employee.last_name,
+          e1.id,
+          e1.first_name,
+          e1.last_name,
           roles.title,
           department.name AS department,
           roles.salary,
-          CONCAT(e.first_name, " ", e.last_name) AS Reporting_Manager
-        FROM employee
-        INNER JOIN roles ON employee.role_id = roles.id
+          CONCAT(e2.first_name, " ", e2.last_name) AS Reporting_Manager
+        FROM employee e1
+        INNER JOIN roles ON e1.role_id = roles.id
         INNER JOIN department ON roles.department_id = department.id
-        LEFT JOIN employee AS e ON employee.manager_id = e.id
+        LEFT JOIN employee e2 ON e1.manager_id = e2.id
         ORDER BY id ASC;
         `, (err, results, fields) => {
           if (err) console.log(err);
@@ -128,7 +128,7 @@ class db {
   }
 
 
-  async updateEmployee(data) {
+  async updateEmployeeRole(data) {
     let name = data.employee;
     let nameArr = name.split(' ');
     let firstName = nameArr[0];
@@ -146,6 +146,26 @@ class db {
       )
     })
   }
+
+  async updateEmployeeManager(data) {
+    let name = data.employee;
+    let nameArr = name.split(' ');
+    let firstName = nameArr[0];
+    let lastName = nameArr[1];
+    let manager = await this.managerId(data.manager);
+    return new Promise((res, rej) => {
+      pool.execute(`
+        UPDATE employee
+        SET manager_id = ?
+        WHERE first_name = ? AND last_name = ?`,
+        [manager, firstName, lastName], (err, results, fields) => {
+          if (err) console.log('Error: ' + err);
+          res(results);
+        }
+      )
+    })
+  }
+
 
   employeeList() {
     return new Promise((res, rej) => {
