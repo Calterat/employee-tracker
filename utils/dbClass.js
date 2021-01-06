@@ -62,17 +62,17 @@ class db {
     return new Promise ((res, rej) => {
       pool.execute(`
         SELECT
-          employee.id,
-          first_name,
-          last_name,
+          e1.id,
+          e1.first_name,
+          e1.last_name,
           roles.title,
           department.name AS department,
           roles.salary
-        FROM employee
-        INNER JOIN roles ON employee.role_id = roles.id
+        FROM employee e1
+        INNER JOIN roles ON e1.role_id = roles.id
         INNER JOIN department ON roles.department_id = department.id
         WHERE manager_id = ?
-        ORDER BY employee.id ASC;
+        ORDER BY e1.id ASC;
         `, [id], (err, results, fields) => {
           if (err) console.log(err);
           if (!results[0]) res(console.log('There are no employees under this manager'))
@@ -80,6 +80,30 @@ class db {
         })
     })
   }
+
+  departmentsEmployees(id) {
+    return new Promise ((res, rej) => {
+      pool.execute(`
+        SELECT
+          e1.id,
+          e1.first_name,
+          e1.last_name,
+          roles.title,
+          roles.salary,
+          CONCAT(e2.first_name, " ", e2.last_name) AS Reporting_Manager
+        FROM employee e1
+        INNER JOIN roles ON e1.role_id = roles.id
+        LEFT JOIN employee e2 ON e1.manager_id = e2.id
+        WHERE department_id = ?
+        ORDER BY e1.id ASC;
+        `, [id], (err, results, fields) => {
+          if (err) console.log(err);
+          if (!results[0]) res(console.log('There are no employees under this manager'))
+          res(console.table(results))
+        })
+    })
+  }
+
 
   insertDepartment(department){
     return new Promise ((res, rej) => {

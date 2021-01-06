@@ -12,10 +12,11 @@ const initialize = _ => {
       name: 'choice',
       message: 'What would you like to do?',
       choices: ['View all Departments', 'View all Roles', 
-      'View all Employees', `View Employee's by Manager`,
-      'Add a Department', 'Add a Role', 
-      'Add an Employee', 'Update an Employee Role', 
-      `Update an Employee's Manager`, 'Exit']
+      'View all Employees', 'View Employees by Manager',
+      'View Employees by Department', 'Add a Department',
+      'Add a Role', 'Add an Employee',
+      'Update an Employee Role', `Update an Employee's Manager`,
+      'Exit']
     }
   ])
   .then(data => promptChoice(data.choice))
@@ -38,14 +39,21 @@ const promptChoice = choice => {
       database.viewEmployees()
         .then(initialize);
       break;
-    case `View Employee's by Manager`:
+    case 'View Employees by Manager':
       console.log('');
       viewEmpByManager()
         .then(data => database.managerId(data.manager))
         .then(data => database.managersEmployees(data))
         .then(initialize);
-    break;
-      case 'Add a Department':
+      break;
+    case 'View Employees by Department':
+      console.log('');
+      viewEmpByDept()
+        .then(data => database.departmentId(data.department))
+        .then(data => database.departmentsEmployees(data))
+        .then(initialize);
+      break;  
+    case 'Add a Department':
       addDepartment();
       break;
     case 'Add a Role':
@@ -82,6 +90,18 @@ const viewEmpByManager = async () => {
     }
   ])
 }
+
+const viewEmpByDept = async () => {
+  return inquirer.prompt([
+    {
+      type: 'list',
+      name: 'department',
+      message: `Which department's employees would you like to see?`,
+      choices: await database.departmentList()
+    }
+  ])
+}
+
 
 const updateEmployeeRole = async () => {
   return inquirer.prompt([
