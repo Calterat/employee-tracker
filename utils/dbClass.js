@@ -105,6 +105,20 @@ class db {
     })
   }
 
+  departmentCosts(id) {
+    return new Promise ((res, rej) => {
+      pool.query(`
+        SELECT
+          sum(salary) as 'Total for Department'
+        FROM Roles
+        WHERE department_id = ?;
+      `, [id], (err, results, fields) => {
+        if (err) console.log(err);
+        res(console.table(results))
+      })
+    })
+  }
+
   departmentsEmployees(id) {
     return new Promise ((res, rej) => {
       pool.execute(`

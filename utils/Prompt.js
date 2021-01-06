@@ -94,7 +94,7 @@ const promptChoice = choice => {
     case 'View combined salary of department':
       askDepartment()
         .then(data => database.departmentId(data.department))
-        .then(data => database.departmentsEmployees(data))
+        .then(data => database.departmentCosts(data))
         .then(initialize);
       break;  
     case 'Exit':
