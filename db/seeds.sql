@@ -22,8 +22,8 @@ VALUES
   ('Joe', 'Boss', 6, NULL),
   ('Kels', 'Boss', 7, NULL),
   ('Kim', 'Boss', 8, NULL),
-  ('Jim', 'Bob', 1, 5),
-  ('Joe', 'Schmo', 2, 6),
-  ('Kels', 'Kills', 3, 7),
-  ('Kim', 'Boss', 4, 8);
+  ('Jim', 'Bob', 1, 1),
+  ('Joe', 'Schmo', 2, 2),
+  ('Kels', 'Kills', 3, 3),
+  ('Kim', 'Kard', 4, 4);
   

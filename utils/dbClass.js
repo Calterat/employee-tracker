@@ -3,7 +3,7 @@ const cTable = require('console.table');
 
 const sqlpass = 'password'
 
-const connection = mysql.createConnection({
+const pool = mysql.createPool({
   host: 'localhost',
   user: 'grader',
   password: sqlpass,
@@ -17,36 +17,73 @@ class db {
 
   viewDepartments() {
     return new Promise ((res, rej) => {
-      connection.query(`
-        SELECT * FROM department;
+      pool.query(`
+        SELECT * FROM department
+        ORDER BY id ASC;
         `, (err, results, fields) => res(console.table(results)))
     })
   }
 
   viewRoles() {
     return new Promise ((res, rej) => {
-      connection.query(`
+      pool.query(`
         SELECT roles.id, roles.title, roles.salary, roles.department_id, department.name AS dept_name
         FROM roles
-        JOIN department ON roles.department_id=department.id;
+        JOIN department ON roles.department_id=department.id
+        ORDER BY id ASC;
         `, (err, results, fields) => res(console.table(results)))
     })
   }
 
   viewEmployees() {
     return new Promise ((res, rej) => {
-      connection.query(`
-        SELECT employee.id, employee.first_name, employee.last_name,
-              employee.manager_id, roles.title
-        FROM employee
-        JOIN roles ON employee.role_id = roles.id;
-        `, (err, results, fields) => res(console.table(results)))
+      pool.execute(`
+        SELECT
+          e1.id,
+          e1.first_name,
+          e1.last_name,
+          roles.title,
+          roles.salary,
+          department.name AS dept,
+          @Reporting_Manager
+        FROM employee e1
+        JOIN roles
+          ON e1.role_id=roles.id
+        JOIN department
+          ON roles.department_id=department.id
+        WHERE e1.manager_id IS NULL
+        UNION ALL
+        SELECT
+          e1.id,
+          e1.first_name,
+          e1.last_name,
+          roles.title,
+          roles.salary,
+          department.name AS dept,
+          CONCAT (e2.first_name,' ',e2.last_name) as Reporting_Manager
+        FROM employee e1
+        JOIN roles
+          ON e1.role_id=roles.id
+        JOIN department
+          ON roles.department_id=department.id
+        JOIN employee e2
+          ON e1.manager_id=e2.id
+        ORDER BY ID ASC;
+        `, (err, results, fields) => {
+          if (err) console.log(err);
+          res(console.table(results))
+        })
     })
   }
 
+  // SELECT employee.id, employee.first_name, employee.last_name,
+  // employee.manager_id, roles.title
+  // FROM employee
+  // JOIN roles ON employee.role_id = roles.id;
+
   insertDepartment(department){
     return new Promise ((res, rej) => {
-      connection.execute(`INSERT INTO department (name) VALUES (?)`, [department], (err, results, fields) => {
+      pool.execute(`INSERT INTO department (name) VALUES (?)`, [department], (err, results, fields) => {
         res(results);
       })
     })
@@ -54,7 +91,7 @@ class db {
 
   insertRole(title, salary, department){
     return new Promise ((res, rej) => {
-      connection.execute(
+      pool.execute(
         `INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`,
         [title, salary, department], (err, results, fields) => {
           if (err) console.log(err);
@@ -66,7 +103,7 @@ class db {
   insertEmployee(firstName, lastName, role, manager) {
     if (manager === 'No manager to report to.') manager = null;
     return new Promise ((res, rej) => {
-      connection.execute(
+      pool.execute(
         `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
         [firstName, lastName, role, manager], (err, results, fields) => {
           if (err) console.log(err);
@@ -77,7 +114,7 @@ class db {
 
   roleId(role) {
     return new Promise((res, rej) => {
-      connection.execute(`SELECT id FROM roles WHERE title = ?`, [role], (err, results, fields) => {
+      pool.execute(`SELECT id FROM roles WHERE title = ?`, [role], (err, results, fields) => {
         if (err) console.log(err);
         let roleId = results.map(data => data.id);
         let resolve = roleId[0];
@@ -92,7 +129,7 @@ class db {
     let managerFirstName = managerName[0];
     let managerLastName = managerName[1];
     return new Promise((res, rej) => {
-      connection.execute(`SELECT id FROM employee WHERE first_name = ? AND last_name = ?`, [managerFirstName, managerLastName], (err, results, fields) => {
+      pool.execute(`SELECT id FROM employee WHERE first_name = ? AND last_name = ?`, [managerFirstName, managerLastName], (err, results, fields) => {
         if (err) console.log(err);
         let managerId = results.map(data => data.id);
         let resolve = managerId[0];
@@ -104,7 +141,7 @@ class db {
 
   departmentId(dept) {
     return new Promise((res, rej) => {
-      connection.execute(`SELECT id FROM department WHERE name = ?`, [dept], (err, results, fields) => {
+      pool.execute(`SELECT id FROM department WHERE name = ?`, [dept], (err, results, fields) => {
         if (err) console.log(err);
         let departmentId = results.map(data => data.id);
         let resolve = departmentId[0];
@@ -121,7 +158,7 @@ class db {
     let lastName = nameArr[1];
     let role = await this.roleId(data.role);
     return new Promise((res, rej) => {
-      connection.execute(`
+      pool.execute(`
         UPDATE employee
         SET role_id = ?
         WHERE first_name = ? AND last_name = ?`,
@@ -135,7 +172,7 @@ class db {
 
   employeeList() {
     return new Promise((res, rej) => {
-      connection.query('SELECT * FROM employee', (err, results, fields) => {
+      pool.query('SELECT * FROM employee', (err, results, fields) => {
         let empArr = [...results];
         let empChoices = empArr.map(data => `${data.first_name} ${data.last_name}`);
         res(empChoices);
@@ -145,7 +182,7 @@ class db {
 
   roleList() {
     return new Promise((res, rej) => {
-      connection.query('SELECT * FROM roles', (err, results, fields) => {
+      pool.query('SELECT * FROM roles', (err, results, fields) => {
         let roleArr = [...results];
         let roleChoices = roleArr.map(data => `${data.title}`);
         res(roleChoices);
@@ -156,7 +193,7 @@ class db {
   managerList() {
     let set = null;
     return new Promise((res, rej) => {
-      connection.query('SELECT * FROM employee WHERE manager_id is ?', [set], (err, results, fields) => {
+      pool.query('SELECT * FROM employee WHERE manager_id is ?', [set], (err, results, fields) => {
         let managerArr = [...results];
         let managerChoices = managerArr.map(data => `${data.first_name} ${data.last_name}`);
         managerChoices.push('No manager to report to.');
@@ -168,7 +205,7 @@ class db {
 
   departmentList() {
     return new Promise((res, rej) => {
-      connection.query('SELECT * FROM department', (err, results, fields) => {
+      pool.query('SELECT * FROM department', (err, results, fields) => {
         let deptArr = [...results];
         let deptChoices = deptArr.map(data => `${data.name}`);
         res(deptChoices);
