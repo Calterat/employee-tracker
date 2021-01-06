@@ -39,47 +39,24 @@ class db {
     return new Promise ((res, rej) => {
       pool.execute(`
         SELECT
-          e1.id,
-          e1.first_name,
-          e1.last_name,
+          employee.id,
+          employee.first_name,
+          employee.last_name,
           roles.title,
+          department.name AS department,
           roles.salary,
-          department.name AS dept,
-          @Reporting_Manager
-        FROM employee e1
-        JOIN roles
-          ON e1.role_id=roles.id
-        JOIN department
-          ON roles.department_id=department.id
-        WHERE e1.manager_id IS NULL
-        UNION ALL
-        SELECT
-          e1.id,
-          e1.first_name,
-          e1.last_name,
-          roles.title,
-          roles.salary,
-          department.name AS dept,
-          CONCAT (e2.first_name,' ',e2.last_name) as Reporting_Manager
-        FROM employee e1
-        JOIN roles
-          ON e1.role_id=roles.id
-        JOIN department
-          ON roles.department_id=department.id
-        JOIN employee e2
-          ON e1.manager_id=e2.id
-        ORDER BY ID ASC;
+          CONCAT(e.first_name, " ", e.last_name) AS Reporting_Manager
+        FROM employee
+        INNER JOIN roles ON employee.role_id = roles.id
+        INNER JOIN department ON roles.department_id = department.id
+        LEFT JOIN employee AS e ON employee.manager_id = e.id
+        ORDER BY id ASC;
         `, (err, results, fields) => {
           if (err) console.log(err);
           res(console.table(results))
         })
     })
   }
-
-  // SELECT employee.id, employee.first_name, employee.last_name,
-  // employee.manager_id, roles.title
-  // FROM employee
-  // JOIN roles ON employee.role_id = roles.id;
 
   insertDepartment(department){
     return new Promise ((res, rej) => {

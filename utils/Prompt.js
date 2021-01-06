@@ -6,7 +6,6 @@ const database = new db;
 
 
 const initialize = _ => {
-  console.log('');
   return inquirer.prompt([
     {
       type: 'list',
@@ -21,14 +20,17 @@ const initialize = _ => {
 const promptChoice = choice => {
   switch (choice) {
     case 'View all Departments':
+      console.log('');
       database.viewDepartments()
         .then(initialize);
       break;
     case 'View all Roles':
+      console.log('');
       database.viewRoles()
         .then(initialize);
       break;
     case 'View all Employees':
+      console.log('');
       database.viewEmployees()
         .then(initialize);
       break;
