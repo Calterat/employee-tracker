@@ -38,7 +38,7 @@ JavaScript
 
 > Follow all prompts for any of it's features. It's rather intuitive!
 
-* [Here is a HowTo Video Link!](https://drive.google.com/file/d/1vHNCefZg-BzG0xN3TA8UWlxq0nICIml2/view)
+* [Here is a HowTo Video Link!](https://drive.google.com/file/d/1YH-f9xiX-k9l9phhDzAo1NEXTem4wwBg/view)
 
 
 
