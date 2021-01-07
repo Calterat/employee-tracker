@@ -3,24 +3,21 @@ const db = require('./dbClass')
 
 const database = new db;
 
-
-
 const initialize = _ => {
-  return inquirer.prompt([
-    {
+  return inquirer.prompt([{
       type: 'list',
       name: 'choice',
       message: 'What would you like to do?',
-      choices: ['View all Departments', 'View all Roles', 
-      'View all Employees', 'View Employees by Manager',
-      'View Employees by Department', 'Add a Department',
-      'Add a Role', 'Add an Employee', 'Update an Employee Role',
-      `Update an Employee's Manager`, 'Delete a department',
-      'Delete a role', 'Delete an employee',
-      'View combined salary of department', 'Exit']
-    }
-  ])
-  .then(data => promptChoice(data.choice))
+      choices: ['View all Departments', 'View all Roles',
+        'View all Employees', 'View Employees by Manager',
+        'View Employees by Department', 'Add a Department',
+        'Add a Role', 'Add an Employee', 'Update an Employee Role',
+        `Update an Employee's Manager`, 'Delete a department',
+        'Delete a role', 'Delete an employee',
+        'View combined salary of department', 'Exit'
+      ]
+    }])
+    .then(data => promptChoice(data.choice))
 }
 
 const promptChoice = choice => {
@@ -53,7 +50,7 @@ const promptChoice = choice => {
         .then(data => database.departmentId(data.department))
         .then(data => database.departmentsEmployees(data))
         .then(initialize);
-      break;  
+      break;
     case 'Add a Department':
       addDepartment();
       break;
@@ -79,92 +76,80 @@ const promptChoice = choice => {
         .then(data => database.roleId(data.role))
         .then(data => database.deleteRole(data))
         .then(initialize);
-      break;  
+      break;
     case 'Delete an employee':
       askEmployee()
         .then(data => database.empId(data.employee))
         .then(data => database.deleteEmployee(data))
         .then(initialize);
-      break;  
+      break;
     case `Update an Employee's Manager`:
       updateEmployeeManager()
         .then(data => database.updateEmployeeManager(data))
         .then(initialize);
-      break;  
+      break;
     case 'View combined salary of department':
       askDepartment()
         .then(data => database.departmentId(data.department))
         .then(data => database.departmentCosts(data))
         .then(initialize);
-      break;  
+      break;
     case 'Exit':
       console.log('Good Bye!');
       process.exit();
-    default: console.log('Error, Please CTRL-C to terminate!');
+    default:
+      console.log('Error, Please CTRL-C to terminate!');
       break;
   }
 }
 
 const askDepartment = async () => {
-  return inquirer.prompt([
-    {
-      type: 'list',
-      name: 'department',
-      message: `Which department would you like to delete?`,
-      choices: await database.departmentList()
-    }
-  ])
+  return inquirer.prompt([{
+    type: 'list',
+    name: 'department',
+    message: `Which department would you like to delete?`,
+    choices: await database.departmentList()
+  }])
 }
 
 const askRole = async () => {
-  return inquirer.prompt([
-    {
-      type: 'list',
-      name: 'role',
-      message: `Which role would you like to delete?`,
-      choices: await database.roleList()
-    }
-  ])
+  return inquirer.prompt([{
+    type: 'list',
+    name: 'role',
+    message: `Which role would you like to delete?`,
+    choices: await database.roleList()
+  }])
 }
 
 const askEmployee = async () => {
-  return inquirer.prompt([
-    {
-      type: 'list',
-      name: 'employee',
-      message: `Which employee would you like to delete?`,
-      choices: await database.employeeList()
-    }
-  ])
+  return inquirer.prompt([{
+    type: 'list',
+    name: 'employee',
+    message: `Which employee would you like to delete?`,
+    choices: await database.employeeList()
+  }])
 }
 
-
 const viewEmpByManager = async () => {
-  return inquirer.prompt([
-    {
-      type: 'list',
-      name: 'manager',
-      message: `Which Manager's employees would you like to see?`,
-      choices: await database.managerList()
-    }
-  ])
+  return inquirer.prompt([{
+    type: 'list',
+    name: 'manager',
+    message: `Which Manager's employees would you like to see?`,
+    choices: await database.managerList()
+  }])
 }
 
 const viewEmpByDept = async () => {
-  return inquirer.prompt([
-    {
-      type: 'list',
-      name: 'department',
-      message: `Which department's employees would you like to see?`,
-      choices: await database.departmentList()
-    }
-  ])
+  return inquirer.prompt([{
+    type: 'list',
+    name: 'department',
+    message: `Which department's employees would you like to see?`,
+    choices: await database.departmentList()
+  }])
 }
 
-
 const updateEmployeeRole = async () => {
-  return inquirer.prompt([
-    {
+  return inquirer.prompt([{
       type: 'list',
       name: 'employee',
       message: `Which employee's role needs to change?`,
@@ -180,8 +165,7 @@ const updateEmployeeRole = async () => {
 }
 
 const updateEmployeeManager = async () => {
-  return inquirer.prompt([
-    {
+  return inquirer.prompt([{
       type: 'list',
       name: 'employee',
       message: `Which employee's manager needs to change?`,
@@ -196,69 +180,68 @@ const updateEmployeeManager = async () => {
   ])
 }
 
-
 const addDepartment = _ => {
-  return inquirer.prompt([
-    {
+  return inquirer.prompt([{
       type: 'input',
       name: 'department',
       message: 'What is the name of the department?'
-    }
-  ])
-  .then(data => database.insertDepartment(data.department))
-  .then(initialize);
+    }])
+    .then(data => database.insertDepartment(data.department))
+    .then(initialize);
 }
 
 const addRole = async () => {
-  return inquirer.prompt([
-    {
-      type: 'input',
-      name: 'title',
-      message: 'What is the title of the role?'
-    },
-    {
-      type: 'number',
-      name: 'salary',
-      message: 'What is the salary of this role?'
-    },
-    {
-      type: 'list',
-      name: 'department',
-      message: 'What department is this role in?',
-      choices: await database.departmentList()
-    }
-  ])
-  .then(async data => database.insertRole(data.title, data.salary, await database.departmentId(data.department)))
-  .then(initialize);
+  return inquirer.prompt([{
+        type: 'input',
+        name: 'title',
+        message: 'What is the title of the role?'
+      },
+      {
+        type: 'number',
+        name: 'salary',
+        message: 'What is the salary of this role? (If a valid number is not entered the app will assume $0)'
+      },
+      {
+        type: 'list',
+        name: 'department',
+        message: 'What department is this role in?',
+        choices: await database.departmentList()
+      }
+    ])
+    .then(async data => database.insertRole(data.title, data.salary, await database.departmentId(data.department)))
+    .then(initialize);
 }
 
 const addEmployee = async () => {
-  return inquirer.prompt([
-    {
-      type: 'input',
-      name: 'first_name',
-      message: 'What is the first name of the employee?'
-    },
-    {
-      type: 'input',
-      name: 'last_name',
-      message: 'What is the last name of the employee?'
-    },
-    {
-      type: 'list',
-      name: 'role',
-      message: 'What role will this employee have?',
-      choices: await database.roleList()
-    },
-    {
-      type: 'list',
-      name: 'manager',
-      message: 'Who will be the manager?',
-      choices: await database.managerList()
-    }
-  ])
-  .then(async data => database.insertEmployee(data.first_name, data.last_name, await database.roleId(data.role), await database.empId(data.manager)))
-  .then(initialize);
+  return inquirer.prompt([{
+        type: 'input',
+        name: 'first_name',
+        message: 'What is the first name of the employee?'
+      },
+      {
+        type: 'input',
+        name: 'last_name',
+        message: 'What is the last name of the employee?'
+      },
+      {
+        type: 'list',
+        name: 'role',
+        message: 'What role will this employee have?',
+        choices: await database.roleList()
+      },
+      {
+        type: 'list',
+        name: 'manager',
+        message: 'Who will be the manager?',
+        choices: await database.managerList()
+      }
+    ])
+    .then(async data => {
+      database.insertEmployee(data.first_name, data.last_name, await database.roleId(data.role), await database.empId(data.manager))
+    })
+    .then(initialize);
 }
 
-module.exports = { initialize };
+module.exports = {
+  initialize
+};
