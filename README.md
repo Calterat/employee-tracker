@@ -13,14 +13,17 @@ This node app allows you, the general manager, to add/delete departments, roles/
 
 ## Table of Contents
 
-* [Languages](#languages)
-* [Installation](#installation)
-* [Usage](#usage)
-* [Contributing](#contributing)
-* [Tests](#tests)
-* [License](#license)
-* [Questions](#questions)
-* [Comments](#comments)
+- [Employee Tracker](#employee-tracker)
+  - [Description](#description)
+  - [Table of Contents](#table-of-contents)
+  - [Language(s)](#languages)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Contributing](#contributing)
+  - [Tests](#tests)
+  - [License](#license)
+  - [Questions](#questions)
+  - [Comments](#comments)
 
 
 ## Language(s)
@@ -51,7 +54,7 @@ JavaScript
 
 ## Tests
 
-> N/A, no tests on this project.
+> N/A, no tests on this project. Though I should have...
 
 
 
@@ -73,4 +76,5 @@ If you have additional questions, you may reach me at my E-mail Address: Caltera
 ## Comments
 
 > This README is made with another one of my apps! Check it out here: https://github.com/Calterat/readme-generator
+> Also, Not alot of catches or validation in this one. Plus, I feel the technical debt may be crazy.. I think i could have made this DRYer.
 
